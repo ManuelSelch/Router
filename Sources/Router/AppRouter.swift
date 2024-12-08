@@ -14,6 +14,20 @@ public class AppRouter<
     @Published var sheet: StackRouter<Route>?
     @Published var popup: Route?
     
+    public var currentRoute: Route? {
+        if let popup = popup {
+            return popup
+        }
+        if let sheet = sheet {
+            return sheet.currentRoute
+        }
+        if let root = root {
+            return root.currentRoute
+        } else {
+            return routers[tab]?.currentRoute
+        }
+    }
+    
     public init(
         root: Route? = nil,
         tab: TabRoute,
@@ -28,7 +42,7 @@ public class AppRouter<
         self.popup = nil
     }
     
-    public func push(route: Route) {
+    public func push(_ route: Route) {
         if var sheet = sheet {
             sheet.push(route)
         } else if routers[tab] != nil {
@@ -38,16 +52,35 @@ public class AppRouter<
         }
     }
     
-    public func presentSheet(_ route: Route) {
+    public func showSheet(_ route: Route) {
         sheet = StackRouter(root: route)
     }
     
-    public func showTab(tab: TabRoute, route: Route) {
+    public func showTab(_ tab: TabRoute, route: Route) {
         self.root = nil
         routers[tab]? = .init(root: route)
     }
     
-    public func showRoot(route: Route) {
+    public func showRoot(_ route: Route) {
         self.root = .init(root: route)
+    }
+    
+    public func showPopup(_ route: Route) {
+        self.popup = popup;
+    }
+    
+    public func dismiss() {
+        if popup != nil {
+            popup = nil
+        }
+        else if sheet != nil {
+            sheet = nil
+        }
+        else if root != nil {
+            root?.dismiss()
+        }
+        else {
+            routers[tab]?.dismiss()
+        }
     }
 }

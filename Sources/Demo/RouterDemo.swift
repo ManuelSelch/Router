@@ -41,10 +41,10 @@ struct SwiftUIView: View {
                     switch(route) {
                     case .route1:
                         Text("Route 1")
-                        Button("Route 2", action: { router.push(route: .route2)} )
+                        Button("Route 2", action: { router.push(.route2)} )
                     case .route2:
                         Text("Route 2")
-                        Button("Route 1", action: { router.push(route: .route1)} )
+                        Button("Route 1", action: { router.push(.route1)} )
                     }
                 }
             }, label: { tab in
