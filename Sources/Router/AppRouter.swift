@@ -66,7 +66,7 @@ public class AppRouter<
     }
     
     public func showPopup(_ route: Route) {
-        self.popup = popup;
+        self.popup = route;
     }
     
     public func dismiss() {
