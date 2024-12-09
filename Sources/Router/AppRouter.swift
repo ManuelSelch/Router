@@ -43,8 +43,8 @@ public class AppRouter<
     }
     
     public func push(_ route: Route) {
-        if var sheet = sheet {
-            sheet.push(route)
+        if let sheet = sheet {
+            self.sheet?.push(route)
         } else if routers[tab] != nil {
             routers[tab]?.push(route)
         } else {
