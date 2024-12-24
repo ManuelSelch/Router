@@ -1,6 +1,5 @@
 import SwiftUI
 import PopupView
-import Redux
 
 public struct AppRouterView<
     Route: Equatable & Hashable & Identifiable & Codable,
@@ -39,15 +38,16 @@ public struct AppRouterView<
                     stack:  Binding(
                         get: { router.root?.stack ?? []},
                         set: { router.root?.stack = $0 }
-                    )
-                ) { route in
-                    content(route)
-                }
+                    ),
+                    content: { route in
+                        content(route)
+                    }
+                )
             } else {
                 TabRouterView(
                     tab: $router.tab,
                     content: { tab in
-                        RouterView(
+                        StackRouterView(
                             root: router.routers[tab]!.root,
                             stack: Binding(
                                 get: { router.routers[tab]?.stack ?? []},

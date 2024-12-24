@@ -1,24 +1,6 @@
 {
-  "originHash" : "5b6e96b7e021af78b86926902fd1d3c7f41cf89e96e95ae7024d2dd20caeb55c",
+  "originHash" : "39f92f196c669f0777f75df9d6c5b80661fcce3884475599223e0af1ef669a4d",
   "pins" : [
-    {
-      "identity" : "anycodable",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Flight-School/AnyCodable.git",
-      "state" : {
-        "revision" : "862808b2070cd908cb04f9aafe7de83d35f81b05",
-        "version" : "0.6.7"
-      }
-    },
-    {
-      "identity" : "dependencies",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ManuelSelch/Dependencies.git",
-      "state" : {
-        "revision" : "94ac38716591c5c7e0ce512765e649f06df5f8d8",
-        "version" : "1.0.0"
-      }
-    },
     {
       "identity" : "popupview",
       "kind" : "remoteSourceControl",
@@ -26,33 +8,6 @@
       "state" : {
         "revision" : "d619317dbb98fe071d11be36c2525d3c213ad8e4",
         "version" : "3.1.4"
-      }
-    },
-    {
-      "identity" : "pulse",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/kean/Pulse.git",
-      "state" : {
-        "revision" : "3ac5ee35ab233e900aa484919803d51791d1e351",
-        "version" : "4.2.7"
-      }
-    },
-    {
-      "identity" : "redux",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/manuelselch/Redux",
-      "state" : {
-        "revision" : "4e608714e6bb6a36173f4531a4ad34168e124e3e",
-        "version" : "1.2.14"
-      }
-    },
-    {
-      "identity" : "starscream",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/daltoniam/Starscream.git",
-      "state" : {
-        "revision" : "c6bfd1af48efcc9a9ad203665db12375ba6b145a",
-        "version" : "4.0.8"
       }
     },
     {

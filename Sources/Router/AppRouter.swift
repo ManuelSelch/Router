@@ -1,5 +1,4 @@
 import Foundation
-import Redux
 
 public class AppRouter<
     Route: Equatable & Hashable & Identifiable & Codable,
