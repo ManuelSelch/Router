@@ -19,7 +19,9 @@ public struct StackWithSheetRouterView<
                 StackRouterView(sheet, content: content)
             }
             .onChange(of: router.popup) { _ in
-                PopupManager.present(route: router.popup, onClose: {router.popup = nil}, content: content)
+                if let popup = router.popup {
+                    PopupManager.present(route: popup, onClose: {router.popup = nil}, content: content)
+                }
             }
     }
 }

@@ -1,8 +1,8 @@
 import Foundation
 
 public class StackWithSheetRouter<Route: Equatable & Hashable & Identifiable & Codable>: ObservableObject {
-    public var stack: StackRouter<Route>
-    public var sheet: StackRouter<Route>?
+    @Published public var stack: StackRouter<Route>
+    @Published public var sheet: StackRouter<Route>?
     @Published var popup: Route?
     
     public init(root: Route) {
