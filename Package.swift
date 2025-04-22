@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "Router",
     platforms: [
-        .iOS(.v16),
+        .iOS(.v14),
         .macOS(.v14),
         .macCatalyst(.v16)
     ],
@@ -14,14 +14,14 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/davdroman/swiftui-navigation-transitions.git", .upToNextMajor(from: "0.13.4")),
-        .package(url: "https://github.com/exyte/PopupView.git", .upToNextMajor(from: "3.0.5"))
+        .package(url: "https://github.com/huri000/SwiftEntryKit", .upToNextMajor(from: "2.0.0"))
     ],
     targets: [
         .target(
             name: "Router",
             dependencies: [
-                .product(name: "PopupView", package: "PopupView"),
-                .product(name: "NavigationTransitions", package: "swiftui-navigation-transitions")
+                .product(name: "NavigationTransitions", package: "swiftui-navigation-transitions"),
+                .product(name: "SwiftEntryKit", package: "SwiftEntryKit")
             ]
         ),
         .target(
