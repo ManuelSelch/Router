@@ -1,5 +1,5 @@
 import SwiftUI
-import NavigationTransitions
+import SwiftUINavigationTransitions
 
 public struct StackRouterView<
     Route: Equatable & Hashable & Identifiable & Codable,
