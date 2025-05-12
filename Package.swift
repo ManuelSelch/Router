@@ -13,14 +13,14 @@ let package = Package(
        
     ],
     dependencies: [
-        .package(url: "https://github.com/davdroman/swiftui-navigation-transitions.git", .upToNextMajor(from: "0.13.4")),
+        .package(url: "https://github.com/davdroman/swiftui-navigation-transitions.git", .upToNextMajor(from: "0.15.1")),
         .package(url: "https://github.com/huri000/SwiftEntryKit", .upToNextMajor(from: "2.0.0"))
     ],
     targets: [
         .target(
             name: "Router",
             dependencies: [
-                .product(name: "NavigationTransitions", package: "swiftui-navigation-transitions"),
+                .product(name: "SwiftUINavigationTransitions", package: "swiftui-navigation-transitions"),
                 .product(name: "SwiftEntryKit", package: "SwiftEntryKit")
             ]
         ),

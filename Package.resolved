@@ -1,5 +1,5 @@
 {
-  "originHash" : "05d2b15e588d52dc0302e0fef60f1abb20f5b114b21f71e100e0e5909f9318fc",
+  "originHash" : "dbfc7add3e7c778ac44cb60941c496fa6915fc77a8e32dec8ca30993ecbd6a94",
   "pins" : [
     {
       "identity" : "swiftentrykit",
@@ -24,8 +24,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/davdroman/swiftui-navigation-transitions.git",
       "state" : {
-        "revision" : "76ae9c621422a1f38c30a07c8b7636994b669484",
-        "version" : "0.14.0"
+        "revision" : "4148cc224e5dba72a7d7052d2fe211c83a2a78e9",
+        "version" : "0.15.1"
+      }
+    },
+    {
+      "identity" : "xctest-dynamic-overlay",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
+      "state" : {
+        "revision" : "39de59b2d47f7ef3ca88a039dff3084688fe27f4",
+        "version" : "1.5.2"
       }
     }
   ],
