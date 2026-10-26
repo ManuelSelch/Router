@@ -1,91 +1,175 @@
-# SwiftUI Router Library
-A lightweight and dynamic library for managing navigation in SwiftUI apps. 
-This library allows you to handle route stacks, tab navigation, popups, and sheets, making navigation intuitive and flexible.
+# Router
 
-# Features
-- Stack Navigation: Push and pop routes dynamically within a stack.
-- Tab Router: Manage multiple stacks using a tab-based interface.
-- Popups: Present simple route views as popups.
-- Sheets with Navigation: Open sheets that include their own stack routers for nested navigation.
+Small, dependency-free, state-driven SwiftUI navigation for **iOS 17+**, **macOS 14+**,
+and **Mac Catalyst 17+**. Built with Swift 6, Observation and native platform presentations.
+This is a breaking modernization of 1.0.10, not a drop-in update.
 
-# Usage
-## Basic Setup
-Define your routes and tabs using enums:
+## Install
 
-```swift
-enum MyRoute: Equatable & Hashable & Identifiable & Codable {
-    case route1
-    case route2
-    
-    var id: Self { self }
-}
+Add this repository through Swift Package Manager and link the **Router** product.
+The separately buildable **RouterDemo** product contains example views; it is not a dependency
+of Router. No external packages are required.
 
-enum MyTabRoute: Equatable & Hashable & Codable & Identifiable & CaseIterable {
-    case tab1
-    case tab2
-    
-    var id: Self { self }
-}
-```
+## Stack navigation
 
-## Initialize the Router
-Create your app's router with initial tabs and stacks:
+Routes only need `Hashable`; neither `Codable` nor `Identifiable` is required.
 
 ```swift
+import Router
+import SwiftUI
+
+enum Route: Hashable {
+    case home
+    case detail(Int)
+    case settings
+}
+
 @MainActor
-struct MyRouter {
-    static let shared: AppRouter<MyRoute, MyTabRoute> = AppRouter(
-        tab: .tab1,
-        routers: [
-            .tab1: StackRouter(root: .route1),
-            .tab2: StackRouter(root: .route2)
-        ]
-    )
-}
-```
+struct RootView: View {
+    @State private var stack = StackRouter(root: Route.home)
 
-## Build the View
-Use AppRouterView to render your routes and tabs:
-
-```swift
-struct SwiftUIView: View {
     var body: some View {
-        AppRouterView(
-            router: MyRouter.router,
-            header: {
-                Text("Header")
-            },
-            content: { route in
+        StackRouterView(stack) { route in
+            switch route {
+            case .home:
+                Button("Open detail") { stack.push(.detail(1)) }
+            case .detail(let id):
                 VStack {
-                    switch route {
-                    case .route1:
-                        Text("Route 1")
-                        Button("Go to Route 2", action: { MyRouter.shared.push(route: .route2) })
-                    case .route2:
-                        Text("Route 2")
-                        Button("Go to Route 1", action: { MyRouter.shared.push(route: .route1) })
-                    }
+                    Text("Detail \(id)")
+                    Button("Back") { stack.pop() }
                 }
-            },
-            label: { tab in
-                Text("\(tab)")
+            case .settings:
+                Text("Settings")
             }
-        )
+        }
     }
 }
 ```
 
-## Handle Sheets and Popups
-- Popups: Display simple, temporary views.
-- Sheets: Open modals with their own stack navigation.
+- `push` appends a route; `pop` returns the removed route or nil at the root.
+- `popToRoot` clears the path without removing the root.
+- `replaceRoot` replaces the root and clears its path.
+- `setPath` replaces the typed path, for example for app-owned deep linking.
+- Native Back navigation updates the same path.
+- Models are main-actor isolated. Own them in `@State` or inject an instance per scene/flow;
+  do not share a global singleton across unrelated windows.
+
+## App-level sheets and popovers
+
+Wrap the app's workspace at its composition boundary, rather than constructing Settings
+inside Workspace. The app owns the destination mapping:
 
 ```swift
-MyRouter.shared.presentSheet(route: .route1)
+@MainActor
+struct AppRoot: View {
+    @State private var presentations = PresentationRouter<Route>()
+
+    var body: some View {
+        PresentationRouterView(presentations) {
+            Button("Settings") { presentations.present(.settings) }
+        } destination: { item in
+            StackRouterView(item.stack) { route in
+                VStack {
+                    Text(String(describing: route))
+                    Button("Done") { presentations.dismiss(id: item.id) }
+                }
+                .padding()
+            }
+        }
+    }
+}
 ```
 
-# Installation
-Add the package to your XCode project. 
-Ensure your SwiftUI app uses the @StateObject or dependency injection to manage the router.
+- `present(route)` uses a native sheet. Pass `style: .popover` for a native popover.
+- Admission returns false if this scope is occupied. Dismiss the existing flow explicitly;
+  a new request never silently replaces it.
+- Every presentation has a stable UUID and its own stack. Pushing, popping or replacing
+  that stack's root does not change the presentation identity.
+- `dismiss()` closes the current presentation. Use `dismiss(id:)` in delayed callbacks
+  so an obsolete callback cannot dismiss a newer flow.
+- Set `item.canDismiss = false` while saving. Hosts disable interactive dismissal;
+  router commands and native dismissal binding writes also respect this guard.
+  Re-enable it before dismissing. Use router dismissal for guarded app actions rather
+  than bypassing the router with SwiftUI's environment dismiss action.
+- Destination content may embed `StackRouterView` or render directly.
+- Popovers anchor to the host's base content and may adapt to a sheet on compact iOS.
+  Attach a host to the relevant control when a specific anchor is needed. System styling,
+  transitions and focus behavior are intentional; this is not a custom overlay framework.
+- Nested independent presentation scopes can be composed explicitly. This library does
+  not automatically choose an active stack or walk a global presentation tree.
+- Programmatic dismissal mutates routing state immediately; native transition animations
+  remain asynchronous. It does not provide a presentation-completion queue.
 
-# License
-This library is provided under the MIT License. Feel free to use it in your projects!
+## Optional native tabs
+
+```swift
+enum Tab: Hashable { case chats, projects }
+
+@MainActor
+func makeTabs() throws -> TabRouter<Tab, Route> {
+    try TabRouter(
+        tabs: [
+            (.chats, StackRouter(root: .home)),
+            (.projects, StackRouter(root: .detail(1)))
+        ],
+        selected: .chats
+    )
+}
+
+// In a View, keep the configured router in @State or an injected scope:
+// TabRouterView(tabs) { route in
+//     Text(String(describing: route))
+// } label: { tab in
+//     Text(String(describing: tab))
+// }
+```
+
+Tab configuration is ordered and fixed for each router instance. Empty configuration, duplicate
+tabs and an unknown initial selection throw `TabRouterConfigurationError`. Selecting an unknown
+tab returns false and leaves selection unchanged. Selecting a configured tab preserves its
+stack. Neither `CaseIterable` nor `Identifiable` is required.
+
+Use app-owned workspace state for dynamic document/session tabs; `TabRouterView` is a native
+tab shell, not a document manager.
+
+## Breaking changes from 1.0.10
+
+| Previous API | Modern equivalent |
+|---|---|
+| `AppRouter` | Compose `StackRouter`, `PresentationRouter` and optional `TabRouter` |
+| `StackWithSheetRouter` | Stack plus an independently scoped `PresentationRouter` |
+| `AppRouterView`, `StackWithSheetRouterView` | `PresentationRouterView` around the relevant base view |
+| `stack`, `updateRoutes` | Read `path`; mutate via `setPath` |
+| `presentRoot`, `goBackToRoot` | `replaceRoot`, `popToRoot` |
+| Ambiguous `dismiss` | Stack `pop` versus presentation `dismiss` |
+| `showTab` | `TabRouter.select`; explicit stack replacement when wanted |
+| `showSheet`, `presentSheet` | `PresentationRouter.present` |
+| `showPopup`, `presentPopup` | Native `present(..., style: .popover)` |
+| `ObservableObject`, `@StateObject` | `@Observable`, `@State`; `@Bindable` where needed |
+| Mutable root-derived identity | Separate stable presentation UUID |
+| Mandatory Codable/Identifiable routes | Hashable routes |
+
+There are no legacy aliases or compatibility fallbacks. Codable restoration, custom animations,
+full-screen covers, arbitrary overlays and a deep-link engine are outside this library's scope.
+
+## Examples and verification
+
+`Sources/Demo/RouterDemo.swift` contains public `RouterDemoView` (stack and presentations)
+and `TabbedRouterDemoView` (throwing configuration initializer). Both are library views:
+embed them in your own app or preview; this package does not provide an executable app.
+
+```sh
+swift test
+swift build -c release
+swift build --target RouterDemo
+```
+
+Model tests cover navigation, Observation, identity, guarded/stale dismissal and tab validation.
+Host-boundary tests use the exact binding adapters wired into the SwiftUI hosts. They do **not**
+constitute end-to-end evidence for native gestures, focus, accessibility or animation timing.
+See [implementation evidence](docs/native-modernization/IMPLEMENTATION.md) for platform checks
+and remaining manual acceptance.
+
+## License
+
+MIT, as stated by the original project.
