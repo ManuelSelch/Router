@@ -20,13 +20,13 @@ public struct ModalRouterView<Route: Hashable, Base: View, Destination: View>: V
 
     public var body: some View {
         content()
-            .sheet(item: router.presentationBinding(for: .sheet)) { item in
-                destination(item)
-                    .interactiveDismissDisabled(!item.canDismiss)
+            .sheet(item: router.presentationBinding(for: .sheet)) { flow in
+                destination(flow)
+                    .interactiveDismissDisabled(!flow.canDismiss)
             }
-            .popover(item: router.presentationBinding(for: .popover)) { item in
-                destination(item)
-                    .interactiveDismissDisabled(!item.canDismiss)
+            .popover(item: router.presentationBinding(for: .popover)) { flow in
+                destination(flow)
+                    .interactiveDismissDisabled(!flow.canDismiss)
             }
     }
 }
@@ -38,8 +38,8 @@ extension ModalRouter {
         let renderedID = presentation?.style == style ? presentation?.id : nil
         return Binding(
             get: {
-                guard let item = self.presentation, item.style == style else { return nil }
-                return item
+                guard let flow = self.presentation, flow.style == style else { return nil }
+                return flow
             },
             set: { value in
                 guard value == nil, let renderedID else { return }

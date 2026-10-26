@@ -67,11 +67,11 @@ struct AppRoot: View {
     var body: some View {
         ModalRouterView(modal) {
             Button("Settings") { modal.present(.settings) }
-        } destination: { item in
-            StackRouterView(item.stack) { route in
+        } destination: { flow in
+            StackRouterView(flow.stack) { route in
                 VStack {
                     Text(String(describing: route))
-                    Button("Done") { modal.dismiss(id: item.id) }
+                    Button("Done") { modal.dismiss(id: flow.id) }
                 }
                 .padding()
             }
@@ -87,7 +87,7 @@ struct AppRoot: View {
   that stack's root does not change the presentation identity.
 - `dismiss()` closes the current presentation. Use `dismiss(id:)` in delayed callbacks
   so an obsolete callback cannot dismiss a newer flow.
-- Set `item.canDismiss = false` while saving. Hosts disable interactive dismissal;
+- Set `flow.canDismiss = false` while saving. Hosts disable interactive dismissal;
   router commands and native dismissal binding writes also respect this guard.
   Re-enable it before dismissing. Use router dismissal for guarded app actions rather
   than bypassing the router with SwiftUI's environment dismiss action.

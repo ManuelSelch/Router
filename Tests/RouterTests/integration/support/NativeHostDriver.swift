@@ -23,8 +23,8 @@ final class NativeHostDriver {
         _ = try #require(current?.wrappedValue)
         // Instantiate both host entry points using the same models.
         _ = StackRouterView(stack) { Text(String(describing: $0)) }
-        _ = ModalRouterView(modal) { Text("Root") } destination: { item in
-            StackRouterView(item.stack) { Text(String(describing: $0)) }
+        _ = ModalRouterView(modal) { Text("Root") } destination: { flow in
+            StackRouterView(flow.stack) { Text(String(describing: $0)) }
         }
     }
     func blockDismissal() { modal.presentation?.canDismiss = false }

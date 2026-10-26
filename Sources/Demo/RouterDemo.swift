@@ -31,8 +31,8 @@ public struct RouterDemoView: View {
                     onPopover: { modal.present(.detail, style: .popover) }
                 )
             }
-        } destination: { item in
-            DemoPresentedFlow(item: item, onDismiss: { modal.dismiss(id: item.id) })
+        } destination: { flow in
+            DemoPresentedFlow(flow: flow, onDismiss: { modal.dismiss(id: flow.id) })
         }
     }
 }
@@ -88,17 +88,17 @@ private struct DemoScreen: View {
 
 @MainActor
 private struct DemoPresentedFlow: View {
-    @Bindable var item: PresentedRoute<DemoRoute>
+    @Bindable var flow: PresentedRoute<DemoRoute>
     let onDismiss: () -> Void
 
     var body: some View {
-        StackRouterView(item.stack) { route in
+        StackRouterView(flow.stack) { route in
             VStack(spacing: 16) {
                 Text(String(describing: route)).font(.headline)
-                Toggle("Allow dismissal", isOn: $item.canDismiss)
-                Button("Push detail") { item.stack.push(.detail) }
-                Button("Pop") { item.stack.pop() }
-                Button("Done", action: onDismiss).disabled(!item.canDismiss)
+                Toggle("Allow dismissal", isOn: $flow.canDismiss)
+                Button("Push detail") { flow.stack.push(.detail) }
+                Button("Pop") { flow.stack.pop() }
+                Button("Done", action: onDismiss).disabled(!flow.canDismiss)
             }
             .padding()
         }

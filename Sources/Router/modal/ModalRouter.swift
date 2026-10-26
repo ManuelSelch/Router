@@ -46,7 +46,7 @@ public final class ModalRouter<Route: Hashable> {
     /// Prefer this overload for delayed callbacks to avoid dismissing a newer flow.
     @discardableResult
     public func dismiss(id: UUID) -> Bool {
-        guard let item = presentation, item.id == id, item.canDismiss else { return false }
+        guard let flow = presentation, flow.id == id, flow.canDismiss else { return false }
         presentation = nil
         return true
     }

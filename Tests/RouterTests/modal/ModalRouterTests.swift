@@ -17,14 +17,14 @@ struct ModalRouterTests {
     @Test func keepsIdentityWhileRootAndPathChange() throws {
         let router = ModalRouter<Screen>()
         router.present(.settings)
-        let item = try #require(router.presentation)
-        let id = item.id
-        item.stack.push(.detail(1))
-        item.stack.replaceRoot(.home)
+        let flow = try #require(router.presentation)
+        let id = flow.id
+        flow.stack.push(.detail(1))
+        flow.stack.replaceRoot(.home)
         #expect(router.presentation?.id == id)
         #expect(router.presentation?.stack.currentRoute == .home)
         // Pop is not modal dismissal.
-        item.stack.pop()
+        flow.stack.pop()
         #expect(router.presentation != nil)
     }
 
@@ -32,11 +32,11 @@ struct ModalRouterTests {
         let router = ModalRouter<Screen>()
         #expect(!router.dismiss())
         router.present(.settings)
-        let item = try #require(router.presentation)
-        item.canDismiss = false
+        let flow = try #require(router.presentation)
+        flow.canDismiss = false
         #expect(!router.dismiss())
-        #expect(router.presentation === item)
-        item.canDismiss = true
+        #expect(router.presentation === flow)
+        flow.canDismiss = true
         #expect(router.dismiss())
         #expect(router.presentation == nil)
     }
@@ -57,17 +57,17 @@ struct ModalRouterTests {
     @Test func observationsTrackNestedStackAndDismissalGuard() throws {
         let router = ModalRouter<Screen>()
         router.present(.settings)
-        let item = try #require(router.presentation)
+        let flow = try #require(router.presentation)
         let flag = ChangeFlag()
         withObservationTracking {
             _ = router.presentation?.stack.currentRoute
             _ = router.presentation?.canDismiss
         } onChange: { flag.mark() }
-        item.stack.push(.detail(1))
+        flow.stack.push(.detail(1))
         #expect(flag.changed)
         let guardFlag = ChangeFlag()
-        withObservationTracking { _ = item.canDismiss } onChange: { guardFlag.mark() }
-        item.canDismiss = false
+        withObservationTracking { _ = flow.canDismiss } onChange: { guardFlag.mark() }
+        flow.canDismiss = false
         #expect(guardFlag.changed)
     }
 }
