@@ -1,7 +1,7 @@
 # Router
 
 Small, dependency-free, state-driven SwiftUI navigation for **iOS 17+**, **macOS 14+**,
-and **Mac Catalyst 17+**. Built with Swift 6, Observation and native platform presentations.
+and **Mac Catalyst 17+**. Built with Swift 6, Observation and native platform modal.
 This is a breaking modernization of 1.0.10, not a drop-in update.
 
 ## Install
@@ -62,16 +62,16 @@ inside Workspace. The app owns the destination mapping:
 ```swift
 @MainActor
 struct AppRoot: View {
-    @State private var presentations = ModalRouter<Route>()
+    @State private var modal = ModalRouter<Route>()
 
     var body: some View {
-        ModalRouterView(presentations) {
-            Button("Settings") { presentations.present(.settings) }
+        ModalRouterView(modal) {
+            Button("Settings") { modal.present(.settings) }
         } destination: { item in
             StackRouterView(item.stack) { route in
                 VStack {
                     Text(String(describing: route))
-                    Button("Done") { presentations.dismiss(id: item.id) }
+                    Button("Done") { modal.dismiss(id: item.id) }
                 }
                 .padding()
             }

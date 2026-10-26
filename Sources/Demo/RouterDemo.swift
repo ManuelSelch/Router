@@ -16,23 +16,23 @@ private enum DemoTab: Hashable {
 @MainActor
 public struct RouterDemoView: View {
     @State private var stack = StackRouter(root: DemoRoute.home)
-    @State private var presentations = ModalRouter<DemoRoute>()
+    @State private var modal = ModalRouter<DemoRoute>()
 
     public init() {}
 
     public var body: some View {
-        ModalRouterView(presentations) {
+        ModalRouterView(modal) {
             StackRouterView(stack) { route in
                 DemoScreen(
                     title: String(describing: route),
                     onPush: { stack.push(.detail) },
                     onPop: { stack.pop() },
-                    onSettings: { presentations.present(.settings) },
-                    onPopover: { presentations.present(.detail, style: .popover) }
+                    onSettings: { modal.present(.settings) },
+                    onPopover: { modal.present(.detail, style: .popover) }
                 )
             }
         } destination: { item in
-            DemoPresentedFlow(item: item, onDismiss: { presentations.dismiss(id: item.id) })
+            DemoPresentedFlow(item: item, onDismiss: { modal.dismiss(id: item.id) })
         }
     }
 }

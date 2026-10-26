@@ -6,7 +6,7 @@ import Testing
 @MainActor
 final class NativeHostDriver {
     private let stack = StackRouter(root: Screen.home)
-    private let presentations = ModalRouter<Screen>()
+    private let modal = ModalRouter<Screen>()
     private var current: Binding<PresentedRoute<Screen>?>?
     private var previous: Binding<PresentedRoute<Screen>?>?
 
@@ -18,28 +18,28 @@ final class NativeHostDriver {
 
     func present(_ screen: Screen, style: PresentationStyle) throws {
         previous = current
-        #expect(presentations.present(screen, style: style))
-        current = presentations.presentationBinding(for: style)
+        #expect(modal.present(screen, style: style))
+        current = modal.presentationBinding(for: style)
         _ = try #require(current?.wrappedValue)
         // Instantiate both host entry points using the same models.
         _ = StackRouterView(stack) { Text(String(describing: $0)) }
-        _ = ModalRouterView(presentations) { Text("Root") } destination: { item in
+        _ = ModalRouterView(modal) { Text("Root") } destination: { item in
             StackRouterView(item.stack) { Text(String(describing: $0)) }
         }
     }
-    func blockDismissal() { presentations.presentation?.canDismiss = false }
-    func allowDismissal() { presentations.presentation?.canDismiss = true }
+    func blockDismissal() { modal.presentation?.canDismiss = false }
+    func allowDismissal() { modal.presentation?.canDismiss = true }
     func nativeDismiss() { current?.wrappedValue = nil }
     func oldNativeDismiss() { previous?.wrappedValue = nil }
 
     func expectPresented(_ value: Bool, sourceLocation: SourceLocation = #_sourceLocation) {
-        #expect((presentations.presentation != nil) == value, sourceLocation: sourceLocation)
+        #expect((modal.presentation != nil) == value, sourceLocation: sourceLocation)
     }
     func expectOnly(_ style: PresentationStyle, sourceLocation: SourceLocation = #_sourceLocation) {
-        #expect(presentations.presentationBinding(for: style).wrappedValue != nil,
+        #expect(modal.presentationBinding(for: style).wrappedValue != nil,
                 sourceLocation: sourceLocation)
         let other: PresentationStyle = style == .sheet ? .popover : .sheet
-        #expect(presentations.presentationBinding(for: other).wrappedValue == nil,
+        #expect(modal.presentationBinding(for: other).wrappedValue == nil,
                 sourceLocation: sourceLocation)
     }
 }
