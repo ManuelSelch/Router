@@ -6,7 +6,7 @@ import Testing
 @MainActor
 final class NativeHostDriver {
     private let stack = StackRouter(root: Screen.home)
-    private let presentations = PresentationRouter<Screen>()
+    private let presentations = ModalRouter<Screen>()
     private var current: Binding<PresentedRoute<Screen>?>?
     private var previous: Binding<PresentedRoute<Screen>?>?
 
@@ -23,7 +23,7 @@ final class NativeHostDriver {
         _ = try #require(current?.wrappedValue)
         // Instantiate both host entry points using the same models.
         _ = StackRouterView(stack) { Text(String(describing: $0)) }
-        _ = PresentationRouterView(presentations) { Text("Root") } destination: { item in
+        _ = ModalRouterView(presentations) { Text("Root") } destination: { item in
             StackRouterView(item.stack) { Text(String(describing: $0)) }
         }
     }

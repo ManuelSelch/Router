@@ -16,12 +16,12 @@ private enum DemoTab: Hashable {
 @MainActor
 public struct RouterDemoView: View {
     @State private var stack = StackRouter(root: DemoRoute.home)
-    @State private var presentations = PresentationRouter<DemoRoute>()
+    @State private var presentations = ModalRouter<DemoRoute>()
 
     public init() {}
 
     public var body: some View {
-        PresentationRouterView(presentations) {
+        ModalRouterView(presentations) {
             StackRouterView(stack) { route in
                 DemoScreen(
                     title: String(describing: route),

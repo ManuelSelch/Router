@@ -3,9 +3,9 @@ import Testing
 @testable import Router
 
 @Suite @MainActor
-struct PresentationRouterTests {
+struct ModalRouterTests {
     @Test func admitsOnlyOnePresentationAcrossStyles() throws {
-        let router = PresentationRouter<Screen>()
+        let router = ModalRouter<Screen>()
         #expect(router.present(.settings, style: .sheet))
         let first = try #require(router.presentation)
         #expect(!router.present(.detail(1), style: .popover))
@@ -15,7 +15,7 @@ struct PresentationRouterTests {
     }
 
     @Test func keepsIdentityWhileRootAndPathChange() throws {
-        let router = PresentationRouter<Screen>()
+        let router = ModalRouter<Screen>()
         router.present(.settings)
         let item = try #require(router.presentation)
         let id = item.id
@@ -29,7 +29,7 @@ struct PresentationRouterTests {
     }
 
     @Test func blocksDismissalUntilAllowed() throws {
-        let router = PresentationRouter<Screen>()
+        let router = ModalRouter<Screen>()
         #expect(!router.dismiss())
         router.present(.settings)
         let item = try #require(router.presentation)
@@ -42,7 +42,7 @@ struct PresentationRouterTests {
     }
 
     @Test func rejectsStaleDismissalAndGivesNewInstancesFreshIdentity() throws {
-        let router = PresentationRouter<Screen>()
+        let router = ModalRouter<Screen>()
         router.present(.settings)
         let oldID = try #require(router.presentation?.id)
         #expect(router.dismiss(id: oldID))
@@ -55,7 +55,7 @@ struct PresentationRouterTests {
     }
 
     @Test func observationsTrackNestedStackAndDismissalGuard() throws {
-        let router = PresentationRouter<Screen>()
+        let router = ModalRouter<Screen>()
         router.present(.settings)
         let item = try #require(router.presentation)
         let flag = ChangeFlag()

@@ -3,13 +3,13 @@ import SwiftUI
 /// Attach at a stable presentation scope. Popovers anchor to this host's base content.
 /// The app chooses whether the destination embeds a StackRouterView.
 @MainActor
-public struct PresentationRouterView<Route: Hashable, Base: View, Destination: View>: View {
-    private let router: PresentationRouter<Route>
+public struct ModalRouterView<Route: Hashable, Base: View, Destination: View>: View {
+    private let router: ModalRouter<Route>
     private let content: () -> Base
     private let destination: (PresentedRoute<Route>) -> Destination
 
     public init(
-        _ router: PresentationRouter<Route>,
+        _ router: ModalRouter<Route>,
         @ViewBuilder content: @escaping () -> Base,
         @ViewBuilder destination: @escaping (PresentedRoute<Route>) -> Destination
     ) {
@@ -31,7 +31,7 @@ public struct PresentationRouterView<Route: Hashable, Base: View, Destination: V
     }
 }
 
-extension PresentationRouter {
+extension ModalRouter {
     func presentationBinding(for style: PresentationStyle) -> Binding<PresentedRoute<Route>?> {
         // A SwiftUI dismissal can arrive after a new presentation was admitted.
         // Capture the rendered identity rather than dismissing whatever is current then.

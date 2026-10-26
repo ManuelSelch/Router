@@ -23,7 +23,7 @@ public final class PresentedRoute<Route: Hashable>: Identifiable {
 
 /// Own one instance per presentation scope. Busy presentations are never replaced implicitly.
 @MainActor @Observable
-public final class PresentationRouter<Route: Hashable> {
+public final class ModalRouter<Route: Hashable> {
     public private(set) var presentation: PresentedRoute<Route>?
 
     public init() {}

@@ -62,10 +62,10 @@ inside Workspace. The app owns the destination mapping:
 ```swift
 @MainActor
 struct AppRoot: View {
-    @State private var presentations = PresentationRouter<Route>()
+    @State private var presentations = ModalRouter<Route>()
 
     var body: some View {
-        PresentationRouterView(presentations) {
+        ModalRouterView(presentations) {
             Button("Settings") { presentations.present(.settings) }
         } destination: { item in
             StackRouterView(item.stack) { route in
@@ -136,14 +136,14 @@ tab shell, not a document manager.
 
 | Previous API | Modern equivalent |
 |---|---|
-| `AppRouter` | Compose `StackRouter`, `PresentationRouter` and optional `TabRouter` |
-| `StackWithSheetRouter` | Stack plus an independently scoped `PresentationRouter` |
-| `AppRouterView`, `StackWithSheetRouterView` | `PresentationRouterView` around the relevant base view |
+| `AppRouter` | Compose `StackRouter`, `ModalRouter` and optional `TabRouter` |
+| `StackWithSheetRouter` | Stack plus an independently scoped `ModalRouter` |
+| `AppRouterView`, `StackWithSheetRouterView` | `ModalRouterView` around the relevant base view |
 | `stack`, `updateRoutes` | Read `path`; mutate via `setPath` |
 | `presentRoot`, `goBackToRoot` | `replaceRoot`, `popToRoot` |
 | Ambiguous `dismiss` | Stack `pop` versus presentation `dismiss` |
 | `showTab` | `TabRouter.select`; explicit stack replacement when wanted |
-| `showSheet`, `presentSheet` | `PresentationRouter.present` |
+| `showSheet`, `presentSheet` | `ModalRouter.present` |
 | `showPopup`, `presentPopup` | Native `present(..., style: .popover)` |
 | `ObservableObject`, `@StateObject` | `@Observable`, `@State`; `@Bindable` where needed |
 | Mutable root-derived identity | Separate stable presentation UUID |
